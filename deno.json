@@ -1,0 +1,62 @@
+{
+    "name": "@juannpz/deno-server-tools",
+    "description": "A Deno library for building servers with Hono, offering strongly-typed route parameters, custom and pre-configured middleware, route grouping, and parameter validation.",
+    "version": "0.1.0",
+    "license": "MIT",
+    "author": "juannpz <juannpz@proton.me>",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/juannpz/deno-server-tools.git"
+    },
+    "keywords": [
+        "deno",
+        "server",
+        "middleware",
+        "tools",
+        "http",
+        "hono"
+    ],
+    "exports": "./mod.ts",
+    "tasks": {
+        "dev": "deno run --allow-net --allow-env --allow-read main.ts",
+        "dev-w": "deno run --watch --allow-net --allow-env --allow-read main.ts",
+        "test": "deno test",
+        "check": "deno check mod.ts",
+        "build:npm": "deno run -A build_npm.ts",
+        "publish:jsr": "deno publish",
+        "publish:npm": "cd npm && npm publish"
+    },
+    "imports": {
+        "@std/assert": "jsr:@std/assert@1"
+    },
+    "fmt": {
+        "include": [
+            "src/",
+            "tests/",
+            "mod.ts",
+            "deps.ts"
+        ],
+        "indentWidth": 2,
+        "singleQuote": true
+    },
+    "lint": {
+        "include": [
+            "src/",
+            "tests/",
+            "mod.ts",
+            "deps.ts"
+        ]
+    },
+    "publish": {
+        "include": [
+            "mod.ts",
+            "deps.ts",
+            "src/",
+            "LICENSE",
+            "README.md"
+        ],
+        "exclude": [
+            "tests/"
+        ]
+    }
+}
