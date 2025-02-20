@@ -1,5 +1,5 @@
 import { ServerBuilder } from './base-server.ts';
-export { Route, route } from "./route-builder.ts";
+export { Route, route, Router } from "./route-builder.ts";
 
 export * from "./middleware.ts";
 
