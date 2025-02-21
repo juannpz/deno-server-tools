@@ -1,6 +1,6 @@
-export { Hono } from "npm:hono@4.7.2";
-export type { Context, TypedResponse } from "npm:hono@4.7.2";
-export type { ContentfulStatusCode } from "npm:hono@4.7.2/utils/http-status";
-export type { JSONValue, SimplifyDeepArray, InvalidJSONValue, JSONParsed } from "npm:hono@4.7.2/utils/types";
-export { cors } from "npm:hono@4.7.2/cors";
-export { logger } from "npm:hono@4.7.2/logger";
+export { Hono } from "hono";
+export type { Context, TypedResponse } from "hono";
+export type { ContentfulStatusCode } from "hono/utils/http-status";
+export type { JSONValue, SimplifyDeepArray, InvalidJSONValue, JSONParsed } from "hono/utils/types";
+export { cors } from "hono/cors";
+export { logger } from "hono/logger";
