@@ -1,5 +1,4 @@
-import { createServer } from './src/index.ts';
-import { Router } from './src/server/route-builder.ts';
+import { createServer, Router } from './src/index.ts';
 
 const server = createServer();
 
