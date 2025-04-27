@@ -3,7 +3,6 @@ import { buildResponse, type GenericResponse } from '../utils/http.ts';
 
 interface IGenerateKeyConfig {
     format: Exclude<KeyFormat, "jwk">;
-    keyData: BufferSource;
     algorithm: AlgorithmIdentifier | HmacImportParams | RsaHashedImportParams | EcKeyImportParams;
     extractable: boolean;
     keyUsages: KeyUsage[];
