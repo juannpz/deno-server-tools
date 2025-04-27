@@ -51,10 +51,14 @@
             "deps.ts",
             "src/",
             "LICENSE",
-            "README.md"
+            "README.md",
+            "vendor/"
         ],
         "exclude": [
-            "tests/"
+            "tests/",
+            "!vendor/**",
+            "vendor/deno.land/x/deno_cache@0.6.2/lib/snippets/#deno_cache_dir-a2aec_8ef02/fs.js",
+            "vendor/deno.land/x/ts_morph@20.0.0/common/#denoruntime_552f5.ts"
         ]
     }
 }
