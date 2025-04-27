@@ -62,3 +62,7 @@ export class ServerBuilder {
         });
     }
 }
+
+export function createServer(config?: Partial<ServerConfig>): ServerBuilder {
+    return new ServerBuilder(config);
+}

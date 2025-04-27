@@ -1,4 +1,5 @@
-import { createServer, Router } from './src/index.ts';
+import { Router } from './src/index.ts';
+import { createServer } from './src/server/base-server.ts';
 
 const server = createServer();
 
