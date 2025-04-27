@@ -1,15 +1,18 @@
-export type GenericResponse<T> = SuccessResponse<T> | FailureResponse;
+export type GenericResponse<T, E = unknown, A = unknown> = SuccessResponse<T> | FailureResponse<E, A>;
 
-export function buildResponse<T>(response: GenericResponse<T>): GenericResponse<T> {
+export function buildResponse<T, E, A>(response: GenericResponse<T, E, A>): GenericResponse<T, E, A> {
     if (!response.success) {
-        const { error, message, code } = response;
+        const { error, message, code, errorType, additionalData } = response;
         const defaultErrorCode = 500;
+        const defaultErrorMessage = "An error occurred, but no additional details are available";
 
-        if (message)
+        if (message || errorType)
             return {
                 ...response,
-                message,
-                code: code ?? defaultErrorCode
+                message: message ?? defaultErrorMessage,
+                code: code ?? defaultErrorCode,
+                errorType: errorType,
+                additionalData: additionalData
             };
 
         if (isFetchError(error)) {
@@ -19,6 +22,7 @@ export function buildResponse<T>(response: GenericResponse<T>): GenericResponse<
                 ...response,
                 message: fetchMessage ?? "An unknown network error occurred",
                 code: fetchCode,
+                errorType: errorType ?? error.name
             };
         }
 
@@ -28,6 +32,7 @@ export function buildResponse<T>(response: GenericResponse<T>): GenericResponse<
                 ...response,
                 message: error.message ?? "An unknown error occurred",
                 code: httpCode ?? defaultErrorCode,
+                errorType: errorType ?? error.name
             };
         }
 
@@ -35,6 +40,7 @@ export function buildResponse<T>(response: GenericResponse<T>): GenericResponse<
             ...response,
             message: "An error occurred, but no additional details are available",
             code: defaultErrorCode,
+            errorType
         };
     }
 
@@ -98,10 +104,12 @@ type SuccessResponse<T> = {
     data: T;
 };
 
-type FailureResponse = {
+type FailureResponse<E, A> = {
     success: false;
     error?: unknown;
     message?: string;
+    errorType?: E | unknown;
+    additionalData?: A;
     code?: number;
 };
 
@@ -118,7 +126,7 @@ function isResponseError(error: unknown): error is { response: Response } {
 
 function extractFetchErrorMessage(error: unknown): string | undefined {
     if (error instanceof TypeError) {
-        return error.message; // Network errors like CORS, connection refused
+        return error.message;
     }
 
     if (error instanceof Error && error.name === 'AbortError') {
@@ -128,14 +136,12 @@ function extractFetchErrorMessage(error: unknown): string | undefined {
     if (isResponseError(error)) {
         const response = error.response;
         try {
-            // Verificar la estructura usando guardas de tipo
             if (hasMessageInBodyInit(response) &&
                 response._bodyInit &&
                 'message' in response._bodyInit) {
                 return response._bodyInit.message;
             }
         } catch {
-            // Si no puede analizar el cuerpo de la respuesta, use el texto de estado
             return `${response.status} ${response.statusText}`;
         }
     }
