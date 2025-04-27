@@ -1,4 +1,4 @@
-import { create, type Header, verify, type Payload } from "https://deno.land/x/djwt@v3.0.2/mod.ts";
+import { create, type Header, verify, type Payload } from '../../vendor/deno.land/x/djwt@v3.0.2/mod.ts';
 import { buildResponse, type GenericResponse } from '../utils/http.ts';
 
 interface IGenerateKeyConfig {
