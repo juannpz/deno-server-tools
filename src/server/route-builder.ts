@@ -108,9 +108,9 @@ export class Route<
                 return this;
             }
 
-    public validateBody(validator: (body: unknown) => boolean): this {
-                this._bodyValidator = validator;
-                return this;
+    public validateBody<T>(validator: (body: T) => boolean): this {
+                this._bodyValidator = validator as (body: unknown) => boolean;
+                return this; 
             }
 
     public cache(maxAge: number): this {
