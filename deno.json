@@ -56,5 +56,6 @@
         "exclude": [
             "tests/"
         ]
-    }
+    },
+    "vendor": true
 }

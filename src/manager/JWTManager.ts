@@ -1,22 +1,17 @@
-import { create, verify, type Payload } from "https://deno.land/x/djwt@v3.0.2/mod.ts";
+import { create, type Header, verify, type Payload } from "https://deno.land/x/djwt@v3.0.2/mod.ts";
 import { buildResponse, type GenericResponse } from '../utils/http.ts';
-
-interface IDecodedToken extends Payload {
-    userId: number;
-}
 
 export class JWTManager {
     private static signature: string | null = null;
     private static textEncoder = new TextEncoder();
 
-    // No permitir instanciación
     private constructor() { }
 
     public static init(signature: string): void {
         JWTManager.signature = signature;
     }
 
-    public static async verify(token: string): Promise<GenericResponse<IDecodedToken>> {
+    public static async verify<T extends Payload>(token: string): Promise<GenericResponse<T>> {
         if (!JWTManager.signature) {
             return buildResponse({
                 success: false,
@@ -30,7 +25,7 @@ export class JWTManager {
             if (!generateKeyResult.success)
                 return generateKeyResult;
 
-            const decodedToken = await verify<IDecodedToken>(token.replaceAll('Bearer ', ''), generateKeyResult.data);
+            const decodedToken = await verify<T>(token.replaceAll('Bearer ', ''), generateKeyResult.data);
 
             return buildResponse({ success: true, data: decodedToken });
         } catch (error) {
@@ -38,7 +33,7 @@ export class JWTManager {
         }
     }
 
-    public static async generate(userId: number, customClaims: Record<string, unknown> = {}): Promise<GenericResponse<string>> {
+    public static async generate<T extends Payload>(configHeader: Header, payload: T): Promise<GenericResponse<string>> {
         if (!JWTManager.signature) {
             return buildResponse({
                 success: false,
@@ -52,14 +47,7 @@ export class JWTManager {
             if (!generateKeyResult.success)
                 return generateKeyResult;
 
-            const jwt = await create({
-                alg: "HS256"
-            }, {
-                iss: 'testProject',
-                sub: String(userId),
-                exp: JWTManager.getExpirationTime(),
-                ...customClaims
-            }, generateKeyResult.data)
+            const jwt = await create(configHeader, payload, generateKeyResult.data)
 
             return buildResponse({ success: true, data: jwt });
         } catch (error) {
@@ -83,11 +71,5 @@ export class JWTManager {
         } catch (error) {
             return buildResponse({ success: false, error });
         }
-    }
-
-    private static getExpirationTime() {
-        const expiresInSeconds = 3600;
-
-        return Math.floor(Date.now() / 1000) + expiresInSeconds;
     }
 }
