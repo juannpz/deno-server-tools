@@ -1,7 +1,7 @@
 import { create, type Header, verify, type Payload } from '../../vendor/deno.land/x/djwt@v3.0.2/mod.ts';
 import { buildResponse, type GenericResponse } from '../utils/http.ts';
 
-interface IGenerateKeyConfig {
+export interface IGenerateKeyConfig {
     format: Exclude<KeyFormat, "jwk">;
     algorithm: AlgorithmIdentifier | HmacImportParams | RsaHashedImportParams | EcKeyImportParams;
     extractable: boolean;

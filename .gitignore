@@ -1,0 +1,17 @@
+## Hidden files and directories
+.*
+!.gitignore
+
+## directories
+node_modules/
+bower_components/
+dist/
+tmp/
+coverage/
+npm/
+
+## files
+vendor_imports.ts
+
+vendor/*
+!vendor/deno.land/x/djwt@v3.0.2/**

@@ -1,7 +1,7 @@
 {
     "name": "@juannpz/deno-server-tools",
     "description": "A Deno library for building servers with Hono, offering strongly-typed route parameters, custom and pre-configured middleware, route grouping, and parameter validation.",
-    "version": "0.10.0",
+    "version": "0.11.0",
     "license": "MIT",
     "author": "juannpz <juannpz@proton.me>",
     "repository": {
@@ -25,7 +25,8 @@
         "publish:npm": "cd npm && npm publish"
     },
     "imports": {
-        "hono": "jsr:@hono/hono@4.7.2"
+        "hono": "jsr:@hono/hono@4.7.2",
+        "djwt": "./vendor_imports.ts"
     },
     "fmt": {
         "include": [
@@ -50,15 +51,13 @@
             "mod.ts",
             "deps.ts",
             "src/",
+            "vendor/deno.land/x/djwt@v3.0.2/**",
             "LICENSE",
-            "README.md",
-            "vendor/"
+            "README.md"
         ],
         "exclude": [
-            "tests/",
-            "!vendor/**",
-            "vendor/deno.land/x/deno_cache@0.6.2/lib/snippets/#deno_cache_dir-a2aec_8ef02/fs.js",
-            "vendor/deno.land/x/ts_morph@20.0.0/common/#denoruntime_552f5.ts"
+            "tests/"
         ]
-    }
+    },
+    "vendor": false
 }
