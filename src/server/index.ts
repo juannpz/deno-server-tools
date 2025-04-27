@@ -1,4 +1,5 @@
 import { ServerBuilder } from './base-server.ts';
+import type { ServerConfig } from './types.ts';
 export { Route, route, Router } from "./route-builder.ts";
 
 export * from "./middleware.ts";
@@ -10,6 +11,6 @@ export type {
     RouteBuilder
 } from "./types.ts";
 
-export function createServer(config?: Partial<import("./types.ts").ServerConfig>): ServerBuilder {
+export function createServer(config?: Partial<ServerConfig>): ServerBuilder {
     return new ServerBuilder(config);
 }
