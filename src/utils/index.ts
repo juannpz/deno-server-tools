@@ -1,2 +1,1 @@
-// src/utils/index.ts
-export * from "./http.ts";
+export * from "./config.ts";
