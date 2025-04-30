@@ -25,8 +25,8 @@
         "publish:npm": "cd npm && npm publish"
     },
     "imports": {
-        "hono": "jsr:@hono/hono@4.7.2",
-        "djwt": "./vendor_imports.ts"
+        "hono": "jsr:@hono/hono@4.7.8",
+        "djwt": "./vendor/deno.land/x/djwt@v3.0.2/mod.ts"
     },
     "fmt": {
         "include": [
@@ -44,6 +44,9 @@
             "tests/",
             "mod.ts",
             "deps.ts"
+        ],
+        "exclude": [
+            "vendor_imports.ts"
         ]
     },
     "publish": {
@@ -52,11 +55,13 @@
             "deps.ts",
             "src/",
             "vendor/deno.land/x/djwt@v3.0.2/**",
+            "vendor/deno.land/std@0.221.0/**",
             "LICENSE",
             "README.md"
         ],
         "exclude": [
-            "tests/"
+            "tests/",
+            "vendor_imports.ts"
         ]
     },
     "vendor": false
