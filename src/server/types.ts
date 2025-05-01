@@ -44,7 +44,8 @@ export interface RouteBuilder <
     PathParams = Record<string, string>,
     QueryParams = Record<string, unknown>,
     BodyType = unknown,
-    HeaderParams = Record < string, string >
+    HeaderParams = Record < string, string>,
+    Variables extends object = ContextVariables
 > {
         path: string;
         method: string;
@@ -53,10 +54,12 @@ export interface RouteBuilder <
         bodySchema?: unknown;
         headerParams: ParamConfig[];
         handler: (context: {
-            c: Context;
+            c: Context <{ Variables: Variables }>;
             params: PathParams;
             query: QueryParams;
             body: BodyType;
             headers: HeaderParams;
         }) => Response | Promise<Response>;
     }
+
+export type ContextVariables = Record<string, unknown>;

@@ -3,15 +3,16 @@
 import type { ContentfulStatusCode, Hono } from "../../deps.ts";
 import type { Context } from "../../deps.ts";
 import { isErrorWithStatus } from '../utils/http.ts';
-import type { ParamConfig, RouteBuilder, MiddlewareFunction } from "./types.ts";
+import type { ParamConfig, RouteBuilder, MiddlewareFunction, ContextVariables } from "./types.ts";
 
 export class Route<
     P extends Record<string, unknown> = Record<string, string>,
     Q extends Record<string, unknown> = Record<string, unknown>,
     B extends Record<string, unknown> = Record<string, unknown>,
-    H extends Record<string, unknown> = Record < string, string >
+    H extends Record<string, unknown> = Record < string, string >,
+    V extends ContextVariables = ContextVariables
 > {
-            private _builder: RouteBuilder<P, Q, B, H> = {
+            private _builder: RouteBuilder<P, Q, B, H, V> = {
                 path: "",
                 method: "GET", 
                 pathParams: [],
@@ -140,19 +141,23 @@ export class Route<
 
     public handler(
         fn: (context: {
-            c: Context;
+            c: Context<{ Variables: V }> ;
             params: P;
             query: Q;
             body: B;
             headers: H;
         }) => Response | Promise<Response>
     ): this {
-        this._builder.handler = fn as (context: { c: Context; params: P; query: Q; body: B; headers: H; }) => Response | Promise<Response>;
+        this._builder.handler = fn as (context: { c: Context<{ Variables: V }>; params: P; query: Q; body: B; headers: H; }) => Response | Promise<Response>;
         return this;
     }
 
-    public register(app: Hono): void {
-                const routeHandler = async (c: Context) => {
+    public withVariables<NewV extends ContextVariables>(): Route<P, Q, B, H, NewV> {
+        return this as unknown as Route<P, Q, B, H, NewV>;
+    }
+
+    public register(app: Hono<{ Variables: V }>): void {
+                const routeHandler = async (c: Context<{ Variables: V }>) => {
                     const params = {} as P;
                     for (const param of this._builder.pathParams) {
                         const value = c.req.param(param.name);
@@ -271,9 +276,9 @@ export function route(path: string): Route {
 }
 
 export const Router = {
-    get: (path: string): Route => new Route(path).get(),
-    post: (path: string): Route => new Route(path).post(),
-    put: (path: string): Route => new Route(path).put(),
-    patch: (path: string): Route => new Route(path).patch(),
-    delete: (path: string): Route => new Route(path).delete(),
+    get: <V extends ContextVariables = ContextVariables>(path: string): Route<Record<string, string>, Record<string, unknown>, Record<string, unknown>, Record<string, string>, V> => new Route<Record<string, string>, Record<string, unknown>, Record<string, unknown>, Record<string, string>, V>(path).get(),
+    post: <V extends ContextVariables = ContextVariables>(path: string): Route<Record<string, string>, Record<string, unknown>, Record<string, unknown>, Record<string, string>, V> => new Route<Record<string, string>, Record<string, unknown>, Record<string, unknown>, Record<string, string>, V>(path).post(),
+    put: <V extends ContextVariables = ContextVariables>(path: string): Route<Record<string, string>, Record<string, unknown>, Record<string, unknown>, Record<string, string>, V> => new Route<Record<string, string>, Record<string, unknown>, Record<string, unknown>, Record<string, string>, V>(path).put(),
+    patch: <V extends ContextVariables = ContextVariables>(path: string): Route<Record<string, string>, Record<string, unknown>, Record<string, unknown>, Record<string, string>, V> => new Route<Record<string, string>, Record<string, unknown>, Record<string, unknown>, Record<string, string>, V>(path).patch(),
+    delete: <V extends ContextVariables = ContextVariables>(path: string): Route<Record<string, string>, Record<string, unknown>, Record<string, unknown>, Record<string, string>, V> => new Route<Record<string, string>, Record<string, unknown>, Record<string, unknown>, Record<string, string>, V>(path).delete(),
 };

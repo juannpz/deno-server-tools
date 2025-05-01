@@ -1,14 +1,14 @@
 import { Hono, cors, logger } from "../../deps.ts";
 import type { Route } from './index.ts';
-import type { ServerConfig } from "./types.ts";
+import type { ContextVariables, ServerConfig } from "./types.ts";
 
-export class ServerBuilder {
-    private app: Hono;
+export class ServerBuilder<V extends ContextVariables = ContextVariables> {
+    private app: Hono<{ Variables: V }>;
     private config: ServerConfig;
-    private routes: Route[] = [];
+    private routes: Route<Record<string, unknown>, Record<string, unknown>, Record<string, unknown>, Record<string, unknown>, V>[] = [];
 
     constructor(config: Partial<ServerConfig> = {}) {
-        this.app = new Hono();
+        this.app = new Hono<{ Variables: V }>();
         this.config = {
             port: config.port || 3000,
             hostname: config.hostname || "0.0.0.0",
@@ -30,14 +30,14 @@ export class ServerBuilder {
         }
     }
 
-    public addRoute(route: Route): this {
+    public addRoute(route: Route<Record<string, unknown>, Record<string, unknown>, Record<string, unknown>, Record<string, unknown>, V>): this {
         this.routes.push(route);
         route.register(this.app);
         return this;
     }
 
-    public group(path: string, routeBuilder: (app: Hono) => void): this {
-        const subApp = new Hono();
+    public group(path: string, routeBuilder: (app: Hono<{ Variables: V }>) => void): this {
+        const subApp = new Hono<{ Variables: V }>();
         routeBuilder(subApp);
         this.app.route(path, subApp);
         return this;
@@ -48,7 +48,7 @@ export class ServerBuilder {
         return this;
     }
 
-    public getApp(): Hono {
+    public getApp(): Hono<{ Variables: V }> {
         return this.app;
     }
 
@@ -63,6 +63,6 @@ export class ServerBuilder {
     }
 }
 
-export function createServer(config?: Partial<ServerConfig>): ServerBuilder {
-    return new ServerBuilder(config);
+export function createServer<V extends ContextVariables = ContextVariables>(config?: Partial<ServerConfig>): ServerBuilder<V> {
+    return new ServerBuilder<V>(config);
 }
