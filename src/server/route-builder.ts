@@ -156,8 +156,8 @@ export class Route<
         return this as unknown as Route<P, Q, B, H, NewV>;
     }
 
-    public register(app: Hono<{ Variables: V }>): void {
-                const routeHandler = async (c: Context<{ Variables: V }>) => {
+    public register<AppV extends V>(app: Hono<{ Variables: AppV }>): void {
+                const routeHandler = async (c: Context<{ Variables: AppV }>) => {
                     const params = {} as P;
                     for (const param of this._builder.pathParams) {
                         const value = c.req.param(param.name);
@@ -226,7 +226,7 @@ export class Route<
 
                     try {
                         return await this._builder.handler({
-                            c,
+                            c: c as unknown as Context<{ Variables: V }>,
                             params,
                             query,
                             body,
