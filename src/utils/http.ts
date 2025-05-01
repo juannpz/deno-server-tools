@@ -1,3 +1,5 @@
+import type { ContentfulStatusCode } from 'hono/utils/http-status';
+
 export type GenericResponse<T, E = unknown, A = unknown> = SuccessResponse<T> | FailureResponse<E, A>;
 
 export function buildResponse<T, E, A>(response: GenericResponse<T, E, A>): GenericResponse<T, E, A> {
@@ -21,7 +23,7 @@ export function buildResponse<T, E, A>(response: GenericResponse<T, E, A>): Gene
             return {
                 ...response,
                 message: fetchMessage ?? "An unknown network error occurred",
-                code: fetchCode,
+                code: fetchCode as ContentfulStatusCode,
                 errorType: errorType ?? error.name
             };
         }
@@ -31,7 +33,7 @@ export function buildResponse<T, E, A>(response: GenericResponse<T, E, A>): Gene
             return {
                 ...response,
                 message: error.message ?? "An unknown error occurred",
-                code: httpCode ?? defaultErrorCode,
+                code: httpCode as ContentfulStatusCode ?? defaultErrorCode as ContentfulStatusCode,
                 errorType: errorType ?? error.name
             };
         }
@@ -65,7 +67,7 @@ export async function createResponseFromFetch<T>(fetchPromise: Promise<Response>
                 success: false,
                 error: response,
                 message: errorData?.message || response.statusText,
-                code: response.status
+                code: response.status as ContentfulStatusCode
             };
         }
 
@@ -110,7 +112,7 @@ type FailureResponse<E, A> = {
     message?: string;
     errorType?: E | unknown;
     additionalData?: A;
-    code?: number;
+    code?: ContentfulStatusCode;
 };
 
 function isFetchError(error: unknown): error is TypeError {
