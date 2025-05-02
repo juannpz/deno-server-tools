@@ -66,7 +66,7 @@ export async function createResponseFromFetch<T>(fetchPromise: Promise<Response>
             return {
                 success: false,
                 error: response,
-                message: errorData?.message || response.statusText,
+                message: errorData?.error ?? errorData?.message ?? response.statusText,
                 code: response.status as ContentfulStatusCode
             };
         }
@@ -184,8 +184,8 @@ function hasStatusProperty(error: Error): error is ErrorWithStatusProperty {
 
 // Helper types
 interface ErrorResponseData {
-    message?: string;
     error?: string;
+    message?: string;
 }
 
 interface ErrorWithResponse {
